@@ -26,3 +26,9 @@ uv venv
 ```sh
 uv sync --all-groups 
 ```
+
+### Run Tests
+
+```sh
+make test
+```

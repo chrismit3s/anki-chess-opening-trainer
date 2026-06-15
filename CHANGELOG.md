@@ -2,6 +2,10 @@
 
 This project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### 1.1.0 - 2026-06-15
+
+* add "Open in Lichess link" (GitHub issue #28 and PR #29)
+
 ### 1.0.3 - 2024-07-23
 
 * fix GitHub issue #23 (ensure import dialog fits screen)

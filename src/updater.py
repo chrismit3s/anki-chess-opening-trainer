@@ -1,4 +1,4 @@
-# Copyright (C) 2023-2024 Guido Flohr <guido.flohr@cantanea.com>,
+# Copyright (C) 2023-2026 Guido Flohr <guido.flohr@cantanea.com>,
 # all rights reserved.
 
 # This program is free software. It comes without any warranty, to
@@ -22,10 +22,10 @@ class Updater:
 
 
 	# pylint: disable=too-few-public-methods
-	def __init__(self, version: sv.Version):
-		if mw is None:
+	def __init__(self, version: sv.Version, anki_mw=mw):
+		if anki_mw is None:
 			raise RuntimeError(_('Cannot run without main window!'))
-		self.mw = mw
+		self.mw = anki_mw
 		self.version = version
 
 
@@ -90,7 +90,7 @@ class Updater:
 		mm  = col.media
 		media_dir = mm.dir()
 
-		for _, deck_id in config['decks'].items():
+		for _, deck_id in config.get('decks', {}).items():
 			if deck_id is not None:
 				for cid in col.decks.cids(deck_id):
 					card = col.get_card(cid)

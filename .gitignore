@@ -11,3 +11,5 @@ src/basic_names.py
 /build
 /ankidata
 /ankiweb-description.md
+.DS_Store
+/.coverage

@@ -1,16 +1,25 @@
 include ./VERSION
 
+UV = uv
+DATAMODEL_CODEGEN = $(UV) run datamodel-codegen
+YAPF = $(UV) run yapf
+ISORT = $(UV) run isort
+MYPY = $(UV) run mypy
+PYLINT = $(UV) run pylint
+PYTEST = $(UV) run pytest
+PYTHON = $(UV) run python
+
 default: all
 
 all: zip ankiweb
 
-generated: src/version.py src/config.py src/schema.py
+generated: src/version.py src/config.py src/schema.py src/basic_names.py
 
 zip: generated vendor
-	python -m ankiscripts.build --type package --qt all --exclude user_files/**/*
+	$(PYTHON) -m ankiscripts.build --type package --qt all --exclude user_files/**/*
 
 ankiweb: generated vendor build/ankiweb-description.md
-	python -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
+	$(PYTHON) -m ankiscripts.build --type ankiweb --qt all --exclude user_files/**/*
 
 build/ankiweb-description.md: description.md CHANGELOG.md
 	cat description.md CHANGELOG.md >$@
@@ -19,40 +28,40 @@ src/version.py: ./VERSION
 	@echo "__version__ = '$(VERSION)'" >$@
 
 src/config.py: ./src/config.schema.json
-	datamodel-codegen \
+	$(DATAMODEL_CODEGEN) \
 		--input=$< \
 		--input-file-type=jsonschema \
 		--output-model-type=typing.TypedDict \
 		| sed -e "s/    /\t/g" >$@
 
 src/schema.py: ./src/config.schema.json
-	python3 ./tools/json2python.py <$< >$@
+	$(PYTHON) ./tools/json2python.py <$< >$@
 
 src/basic_names.py:
 	sh ./tools/get-basic-notetype-names.sh >$@
 
 vendor:
-	python -m ankiscripts.vendor
+	$(PYTHON) -m ankiscripts.vendor
 
 fix:
-	python -m yapf src --recursive --in-place
-	python -m isort src
+	$(PYTHON) -m yapf src --recursive --in-place
+	$(PYTHON) -m isort src
 
 mypy:
 	# See https://github.com/python/mypy/issues/8727
-	-python -m mypy src --exclude=src/vendor --exclude=src/forms \
+	-$(PYTHON) -m mypy src --exclude=src/vendor --exclude=src/forms \
 		--check-untyped-defs --disable-error-code name-defined
 
 pylint:
-	-python -m pylint src
+	-$(PYTHON) -m pylint src
 
 lint: mypy pylint
 
-test:
-	python -m  pytest --cov=src --cov-config=.coveragerc
+test: generated vendor
+	$(PYTHON) -m  pytest --cov=src --cov-config=.coveragerc
 
 sourcedist:
-	python -m ankiscripts.sourcedist
+	$(PYTHON) -m ankiscripts.sourcedist
 
 clean:
 	rm -rf build/ src/version.py src/config.py

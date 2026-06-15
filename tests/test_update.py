@@ -1,7 +1,7 @@
 import unittest
 import copy
 from unittest.mock import MagicMock, patch
-from updater import Updater
+from src.updater import Updater
 
 
 WHITE_DECK_NAME = 'Chess::Opening::White'

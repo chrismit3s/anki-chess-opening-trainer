@@ -58,7 +58,6 @@ pylint:
 lint: mypy pylint
 
 test: generated vendor
-	$(PYTHON) -m  pytest --version
 	$(PYTHON) -m  pytest --cov=src --cov-config=.coveragerc
 
 sourcedist:

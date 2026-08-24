@@ -16,7 +16,7 @@ from typing import List, Literal, Union
 from aqt import mw, AnkiQt
 from aqt.operations import QueryOp
 # pylint: disable=no-name-in-module
-from aqt.qt import (QComboBox, QDialog, # type: ignore[attr-defined]
+from aqt.qt import (QComboBox, QCompleter, QDialog, # type: ignore[attr-defined]
                     QDialogButtonBox, QFileDialog, # type: ignore[attr-defined]
                     QGridLayout, QLabel, QLineEdit, # type: ignore[attr-defined]
                     QListWidget, QListWidgetItem, # type: ignore[attr-defined]
@@ -98,6 +98,12 @@ class ImportDialog(QDialog):
 
 		layout.addWidget(QLabel(_('Tag')), 4, 0)
 		self.tag_edit = QLineEdit()
+		if self.mw is not None and hasattr(self.mw, 'col') and self.mw.col is not None:
+			tags = sorted(self.mw.col.tags.all())
+			completer = QCompleter(tags, self)
+			completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+			completer.setFilterMode(Qt.MatchFlag.MatchContains)
+			self.tag_edit.setCompleter(completer)
 		layout.addWidget(self.tag_edit, 4, 1)
 
 		btn = QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
